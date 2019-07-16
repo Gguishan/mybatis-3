@@ -13,22 +13,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.apache.ibatis.scripting.xmltags;
+package org.apache.ibatis.submitted.resolution.cachereffromxml;
 
-import java.util.Collections;
-import java.util.List;
+import org.apache.ibatis.annotations.CacheNamespace;
+import org.apache.ibatis.submitted.resolution.User;
 
-import org.apache.ibatis.session.Configuration;
-
-/**
- * @author Clinton Begin
- */
-public class SetSqlNode extends TrimSqlNode {
-
-  private static final List<String> COMMA = Collections.singletonList(",");
-
-  public SetSqlNode(Configuration configuration,SqlNode contents) {
-    super(configuration, contents, "SET", COMMA, null, COMMA);
-  }
-
+@CacheNamespace
+public interface UserMapper {
+  User getUser(Integer id);
 }

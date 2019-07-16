@@ -13,22 +13,13 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.apache.ibatis.scripting.xmltags;
+package org.apache.ibatis.submitted.discriminator;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.ibatis.session.Configuration;
+public interface Mapper {
 
-/**
- * @author Clinton Begin
- */
-public class SetSqlNode extends TrimSqlNode {
-
-  private static final List<String> COMMA = Collections.singletonList(",");
-
-  public SetSqlNode(Configuration configuration,SqlNode contents) {
-    super(configuration, contents, "SET", COMMA, null, COMMA);
-  }
+  List<Vehicle> selectVehicles();
+  List<Owner> selectOwnersWithAVehicle();
 
 }

@@ -13,22 +13,28 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.apache.ibatis.scripting.xmltags;
+package org.apache.ibatis.submitted.resolution;
 
-import java.util.Collections;
-import java.util.List;
+import java.io.Serializable;
 
-import org.apache.ibatis.session.Configuration;
+public class User implements Serializable {
+  private static final long serialVersionUID = 1L;
+  private Integer id;
+  private String name;
 
-/**
- * @author Clinton Begin
- */
-public class SetSqlNode extends TrimSqlNode {
-
-  private static final List<String> COMMA = Collections.singletonList(",");
-
-  public SetSqlNode(Configuration configuration,SqlNode contents) {
-    super(configuration, contents, "SET", COMMA, null, COMMA);
+  public Integer getId() {
+    return id;
   }
 
+  public void setId(Integer id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 }

@@ -13,59 +13,45 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.apache.ibatis.submitted.stringlist;
-
-import static org.junit.Assert.*;
+package org.apache.ibatis.submitted.resolution.cachereffromxml;
 
 import java.io.Reader;
-import java.util.List;
 
 import org.apache.ibatis.BaseDataTest;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.submitted.resolution.User;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class StringListTest {
+public class CacheRefFromXmlTest {
 
   private static SqlSessionFactory sqlSessionFactory;
 
   @BeforeClass
   public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/stringlist/mybatis-config.xml")) {
+    // create an SqlSessionFactory
+    try (Reader reader = Resources
+      .getResourceAsReader("org/apache/ibatis/submitted/resolution/cachereffromxml/mybatis-config.xml")) {
       sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
     }
 
     // populate in-memory database
     BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-      "org/apache/ibatis/submitted/stringlist/CreateDB.sql");
+      "org/apache/ibatis/submitted/resolution/CreateDB.sql");
   }
 
   @Test
   public void shouldGetAUser() {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<User> users = mapper.getUsersAndGroups(1);
-      Assert.assertEquals(1, users.size());
-      Assert.assertEquals(2, users.get(0).getGroups().size());
-      Assert.assertEquals(2, users.get(0).getRoles().size());
+      UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+      User user = mapper.getUser(1);
+      Assert.assertEquals(Integer.valueOf(1), user.getId());
+      Assert.assertEquals("User1", user.getName());
     }
   }
 
-  @Test
-  public void shouldFailFastIfCollectionTypeIsAmbiguous() throws Exception {
-    try (Reader reader = Resources
-      .getResourceAsReader("org/apache/ibatis/submitted/stringlist/mybatis-config-invalid.xml")) {
-      new SqlSessionFactoryBuilder().build(reader);
-      fail("Should throw exception when collection type is unresolvable.");
-    } catch (PersistenceException e) {
-      assertTrue(e.getMessage()
-        .contains("Ambiguous collection type for property 'groups'. You must specify 'resultType' or 'resultMap'."));
-    }
-  }
 }

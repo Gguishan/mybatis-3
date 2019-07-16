@@ -13,22 +13,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.apache.ibatis.scripting.xmltags;
 
-import java.util.Collections;
-import java.util.List;
+package org.apache.ibatis.submitted.discriminator;
 
-import org.apache.ibatis.session.Configuration;
+public class Truck extends Vehicle {
+  protected Float carryingCapacity;
 
-/**
- * @author Clinton Begin
- */
-public class SetSqlNode extends TrimSqlNode {
-
-  private static final List<String> COMMA = Collections.singletonList(",");
-
-  public SetSqlNode(Configuration configuration,SqlNode contents) {
-    super(configuration, contents, "SET", COMMA, null, COMMA);
+  public Float getCarryingCapacity() {
+    return carryingCapacity;
   }
 
+  public void setCarryingCapacity(Float carryingCapacity) {
+    this.carryingCapacity = carryingCapacity;
+  }
 }

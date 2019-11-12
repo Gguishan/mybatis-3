@@ -33,6 +33,11 @@ public abstract class TypeReference<T> {
     rawType = getSuperclassTypeParameter(getClass());
   }
 
+  /**
+   * 根据类型处理类获取对应的类型
+   * @param clazz 类型处理类，如{@link org.apache.ibatis.type.NClobTypeHandler}，{@link org.apache.ibatis.type.StringTypeHandler}
+   * @return 类型 如java.lang.String
+   */
   Type getSuperclassTypeParameter(Class<?> clazz) {
     Type genericSuperclass = clazz.getGenericSuperclass();
     if (genericSuperclass instanceof Class) {

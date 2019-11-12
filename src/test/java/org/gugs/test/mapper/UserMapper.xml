@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.gugs.test.mapper.UserMapper">
+    <resultMap type="org.gugs.test.model.User" id="user"></resultMap>
+    <parameterMap type="org.gugs.test.model.User" id="user"></parameterMap>
+
+    <sql id="querySql">
+      select * from tb_user
+    </sql>
+
+    <select id="queryById" parameterMap="user"
+            resultMap="user">
+        <include refid="querySql"></include>
+    </select>
+
+    <insert id="userInsert" parameterType="org.gugs.test.model.User">
+      INSERT INTO tb_user(username,password) VALUES (#{username},#{password})
+    </insert>
+
+   <update id="userUpdate" parameterType="org.gugs.test.model.User">
+        UPDATE tb_user SET
+           password = #{password}
+       <if test="username !=null and username !=''">
+            ,username =#{username}
+       </if>
+           WHERE password = #{password}
+    </update>
+
+    <delete id="deleteById" parameterType="org.gugs.test.model.User">
+
+    </delete>
+</mapper>

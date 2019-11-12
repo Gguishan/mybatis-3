@@ -37,8 +37,12 @@ import org.apache.ibatis.io.Resources;
  */
 public class TypeAliasRegistry {
 
+  // 类型映射表，key为小写类型别名，value为类
   private final Map<String, Class<?>> typeAliases = new HashMap<>();
 
+  /**
+   * 类型别名注册
+   */
   public TypeAliasRegistry() {
     registerAlias("string", String.class);
 
@@ -110,6 +114,7 @@ public class TypeAliasRegistry {
       // issue #748
       String key = string.toLowerCase(Locale.ENGLISH);
       Class<T> value;
+      // 通过类型别名判断typeAliases内是否存在，若不存在则通过反射获取
       if (typeAliases.containsKey(key)) {
         value = (Class<T>) typeAliases.get(key);
       } else {
@@ -125,6 +130,11 @@ public class TypeAliasRegistry {
     registerAliases(packageName, Object.class);
   }
 
+  /**
+   * 注册别名
+   * @param packageName 报名
+   * @param superType 父级类
+   */
   public void registerAliases(String packageName, Class<?> superType) {
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
     resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
@@ -138,6 +148,10 @@ public class TypeAliasRegistry {
     }
   }
 
+  /**
+   * 注册别名： 根据类型注册
+   * @param type
+   */
   public void registerAlias(Class<?> type) {
     String alias = type.getSimpleName();
     Alias aliasAnnotation = type.getAnnotation(Alias.class);
@@ -147,6 +161,11 @@ public class TypeAliasRegistry {
     registerAlias(alias, type);
   }
 
+  /**
+   * 注册别名
+   * @param alias 别名
+   * @param value 类型
+   */
   public void registerAlias(String alias, Class<?> value) {
     if (alias == null) {
       throw new TypeException("The parameter alias cannot be null");
@@ -159,6 +178,11 @@ public class TypeAliasRegistry {
     typeAliases.put(key, value);
   }
 
+  /**
+   * 别名注册： 根据完整类名注册
+   * @param alias
+   * @param value
+   */
   public void registerAlias(String alias, String value) {
     try {
       registerAlias(alias, Resources.classForName(value));

@@ -111,6 +111,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
       } catch (SQLException e) {
         // Failover to true, as most poor drivers
         // or databases won't support transactions
+        // 驱动或数据库不支持事务时，设置为true
         autoCommit = true;
       }
       final Environment environment = configuration.getEnvironment();
@@ -132,6 +133,10 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return environment.getTransactionFactory();
   }
 
+  /**
+   * 关闭事务
+   * @param tx
+   */
   private void closeTransaction(Transaction tx) {
     if (tx != null) {
       try {

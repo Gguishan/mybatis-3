@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
@@ -53,28 +54,31 @@ import org.apache.ibatis.io.Resources;
  */
 public final class TypeHandlerRegistry {
 
-  /**
-   * 数据库类型-类型处理类关联
-   */
   private final Map<JdbcType, TypeHandler<?>>  jdbcTypeHandlerMap = new EnumMap<>(JdbcType.class);
-  /**
-   * java类型-类型处理类关联
-   */
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> typeHandlerMap = new ConcurrentHashMap<>();
-  private final TypeHandler<Object> unknownTypeHandler = new UnknownTypeHandler(this);
+  private final TypeHandler<Object> unknownTypeHandler;
   private final Map<Class<?>, TypeHandler<?>> allTypeHandlersMap = new HashMap<>();
 
-  /**
-   * 空类型映射
-   */
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = Collections.emptyMap();
 
   private Class<? extends TypeHandler> defaultEnumTypeHandler = EnumTypeHandler.class;
 
   /**
-   * 类型处理类注册
+   * The default constructor.
    */
   public TypeHandlerRegistry() {
+    this(new Configuration());
+  }
+
+  /**
+   * The constructor that pass the MyBatis configuration.
+   *
+   * @param configuration a MyBatis configuration
+   * @since 3.5.4
+   */
+  public TypeHandlerRegistry(Configuration configuration) {
+    this.unknownTypeHandler = new UnknownTypeHandler(configuration);
+
     register(Boolean.class, new BooleanTypeHandler());
     register(boolean.class, new BooleanTypeHandler());
     register(JdbcType.BOOLEAN, new BooleanTypeHandler());
@@ -354,22 +358,10 @@ public final class TypeHandlerRegistry {
 
   // java type + handler
 
-  /**
-   * 根据java类与处理类关联
-   * @param javaType
-   * @param typeHandler
-   * @param <T>
-   */
   public <T> void register(Class<T> javaType, TypeHandler<? extends T> typeHandler) {
     register((Type) javaType, typeHandler);
   }
 
-  /**
-   * 根据java类与处理类关联
-   * @param javaType
-   * @param typeHandler
-   * @param <T>
-   */
   private <T> void register(Type javaType, TypeHandler<? extends T> typeHandler) {
     MappedJdbcTypes mappedJdbcTypes = typeHandler.getClass().getAnnotation(MappedJdbcTypes.class);
     if (mappedJdbcTypes != null) {

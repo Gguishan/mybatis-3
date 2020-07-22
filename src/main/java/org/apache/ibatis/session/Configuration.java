@@ -664,10 +664,22 @@ public class Configuration {
     return newExecutor(transaction, defaultExecutorType);
   }
 
+  /**
+   * 新建SQL执行器
+   *
+   * @param transaction 事务对象
+   * @param executorType 执行器类型
+   * @return
+   */
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
     executorType = executorType == null ? defaultExecutorType : executorType;
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
+    /**
+     * BATCH: 批量执行所有更新语句
+     * REUSE: 复用预处理语句
+     * SIMPLE: 默认，每个语句的执行创建一个新的预处理语句
+     */
     if (ExecutorType.BATCH == executorType) {
       executor = new BatchExecutor(this, transaction);
     } else if (ExecutorType.REUSE == executorType) {
@@ -675,9 +687,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    // 使用缓存执行器
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
+    // 调用插件
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

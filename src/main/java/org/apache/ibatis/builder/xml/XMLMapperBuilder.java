@@ -92,8 +92,10 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   public void parse() {
     if (!configuration.isResourceLoaded(resource)) {
+      // 处理xml文件中mapper节点内的元素
       configurationElement(parser.evalNode("/mapper"));
       configuration.addLoadedResource(resource);
+      // 将命名空间中的mapper接口类注册至配置类（mapperRegistry）
       bindMapperForNamespace();
     }
 
@@ -115,9 +117,13 @@ public class XMLMapperBuilder extends BaseBuilder {
       builderAssistant.setCurrentNamespace(namespace);
       cacheRefElement(context.evalNode("cache-ref"));
       cacheElement(context.evalNode("cache"));
+      // 处理<parameterMap/>配置，可以是多个
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+      // 处理<resultMap/>配置
       resultMapElements(context.evalNodes("/mapper/resultMap"));
+      // 处理<sql/>拼接片段，可以是多个
       sqlElement(context.evalNodes("/mapper/sql"));
+      // 处理<select/>或<insert/>或<update/>或<delete/>语句，可以是多个
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
@@ -131,10 +137,17 @@ public class XMLMapperBuilder extends BaseBuilder {
     buildStatementFromContext(list, null);
   }
 
+  /**
+   * 处理XML内声明设置的sql
+   *
+   * @param list
+   * @param requiredDatabaseId
+   */
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
       final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
       try {
+        // 解析sql
         statementParser.parseStatementNode();
       } catch (IncompleteElementException e) {
         configuration.addIncompleteStatement(statementParser);
@@ -214,6 +227,10 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 处理<parameterMap/>配置
+   * @param list
+   */
   private void parameterMapElement(List<XNode> list) {
     for (XNode parameterMapNode : list) {
       String id = parameterMapNode.getStringAttribute("id");

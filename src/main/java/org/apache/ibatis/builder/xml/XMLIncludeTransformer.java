@@ -59,10 +59,16 @@ public class XMLIncludeTransformer {
    *          Current context for static variables with values
    */
   private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
+    // 判断是否包含<include/>节点
     if (source.getNodeName().equals("include")) {
+      // 获取<include/>中refid引入的<sql/>片段结点
       Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
       Properties toIncludeContext = getVariablesContext(source, variablesContext);
+      /**
+       * 递归解析，因为<include/>中也可能引入其他的sql片段
+       */
       applyIncludes(toInclude, toIncludeContext, true);
+
       if (toInclude.getOwnerDocument() != source.getOwnerDocument()) {
         toInclude = source.getOwnerDocument().importNode(toInclude, true);
       }

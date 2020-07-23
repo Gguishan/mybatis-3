@@ -53,8 +53,13 @@ public class XMLStatementBuilder extends BaseBuilder {
     this.requiredDatabaseId = databaseId;
   }
 
+  /**
+   * XML中sql片段解析
+   */
   public void parseStatementNode() {
+    // SQL语句对应的接口方法名
     String id = context.getStringAttribute("id");
+    // 数据库厂商标志，一般为null
     String databaseId = context.getStringAttribute("databaseId");
 
     if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
@@ -69,16 +74,25 @@ public class XMLStatementBuilder extends BaseBuilder {
     boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
     // Include Fragments before parsing
+    // 在解析整个语句之前，将其中引入的sql片段包含进来，如<include refid=""/>引入的<sql/>片段，需要解析引入
     XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
+    // 处理结点的<sql/>引入语句
     includeParser.applyIncludes(context.getNode());
 
+    // 输入参数类型
     String parameterType = context.getStringAttribute("parameterType");
+    // 类型parameterType可能是自定义别名,如int -> Integer.class, string -> String.class, 也可能是实体类全限定名
+    //
+    // 是别名，则从类型注册表中获取给类型Class
+    // 若是实体类全限定名，则将parameterType通过反射【Class.forName】转为Class
     Class<?> parameterTypeClass = resolveClass(parameterType);
 
+    // 语言
     String lang = context.getStringAttribute("lang");
     LanguageDriver langDriver = getLanguageDriver(lang);
 
     // Parse selectKey after includes and remove them.
+    // 解析selectKey
     processSelectKeyNodes(id, parameterTypeClass, langDriver);
 
     // Parse the SQL (pre: <selectKey> and <include> were parsed and removed)
@@ -95,6 +109,9 @@ public class XMLStatementBuilder extends BaseBuilder {
 
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
+    /**
+     * 属性值
+     */
     Integer fetchSize = context.getIntAttribute("fetchSize");
     Integer timeout = context.getIntAttribute("timeout");
     String parameterMap = context.getStringAttribute("parameterMap");
@@ -110,6 +127,7 @@ public class XMLStatementBuilder extends BaseBuilder {
     String keyColumn = context.getStringAttribute("keyColumn");
     String resultSets = context.getStringAttribute("resultSets");
 
+    // 将每个接口方法对应的mapper声明[MappedStatement]添加至配置类中
     builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType,
         fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass,
         resultSetTypeEnum, flushCache, useCache, resultOrdered,

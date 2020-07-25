@@ -154,6 +154,9 @@ public class Configuration {
   protected Class<?> configurationFactory;
 
   protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+  /**
+   * 插件——拦截器链，用于存储拦截器以及拦截器列表的获取
+   */
   protected final InterceptorChain interceptorChain = new InterceptorChain();
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
@@ -712,7 +715,7 @@ public class Configuration {
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
-    // 调用插件
+    // 调用插件，插件使用责任链模式
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

@@ -22,8 +22,15 @@ import java.util.List;
 /**
  * @author Clinton Begin
  */
+
+/**
+ * 责任链模式
+ */
 public class InterceptorChain {
 
+  /**
+   * 责任链——所有拦截器的集合
+   */
   private final List<Interceptor> interceptors = new ArrayList<>();
 
   public Object pluginAll(Object target) {

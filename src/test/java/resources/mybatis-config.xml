@@ -6,9 +6,9 @@
             <transactionManager type="JDBC" />
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver" />
-                <property name="url" value="jdbc:mysql://localhost:3306/db_mybatis" />
-                <property name="username" value="root" />
-                <property name="password" value="root" />
+                <property name="url" value="jdbc:mysql://192.168.43.72:3306/pluto_market" />
+                <property name="username" value="gugs" />
+                <property name="password" value="db_pluto_gugs" />
             </dataSource>
         </environment>
     </environments>

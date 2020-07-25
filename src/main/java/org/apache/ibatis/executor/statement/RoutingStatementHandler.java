@@ -32,8 +32,15 @@ import org.apache.ibatis.session.RowBounds;
 /**
  * @author Clinton Begin
  */
+
+/**
+ * 适配器模式
+ */
 public class RoutingStatementHandler implements StatementHandler {
 
+  /**
+   * 适配器对象，给实现类对象的使用提供一个统一、简易的使用适配器
+   */
   private final StatementHandler delegate;
 
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {

@@ -69,8 +69,11 @@ public class XMLStatementBuilder extends BaseBuilder {
     String nodeName = context.getNode().getNodeName();
     SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+    // 是否刷新缓存，用于insert, update, delete语句
     boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
+    // 是否应用一级缓存
     boolean useCache = context.getBooleanAttribute("useCache", isSelect);
+    // 结果是否排序，用于resultMap的级联
     boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
     // Include Fragments before parsing
@@ -108,12 +111,15 @@ public class XMLStatementBuilder extends BaseBuilder {
     }
 
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
+    // 选择JDBC的statement类型，默认为PREPARED类型
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
     /**
      * 属性值
      */
     Integer fetchSize = context.getIntAttribute("fetchSize");
+    // 执行sql的超时时间
     Integer timeout = context.getIntAttribute("timeout");
+    // 参数Map，即将舍弃
     String parameterMap = context.getStringAttribute("parameterMap");
     String resultType = context.getStringAttribute("resultType");
     Class<?> resultTypeClass = resolveClass(resultType);
@@ -123,7 +129,9 @@ public class XMLStatementBuilder extends BaseBuilder {
     if (resultSetTypeEnum == null) {
       resultSetTypeEnum = configuration.getDefaultResultSetType();
     }
+    // 主键属性
     String keyProperty = context.getStringAttribute("keyProperty");
+    // 主键列
     String keyColumn = context.getStringAttribute("keyColumn");
     String resultSets = context.getStringAttribute("resultSets");
 

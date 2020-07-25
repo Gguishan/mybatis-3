@@ -98,6 +98,13 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
+
+/**
+ * 1.读取配置文件后，将其中配置存入此对象，如XML配置文件 及 映射XML文件
+ * 2.初始化基础配置
+ * 3.提供单例，为后续创建SQLSessionFactory服务并提供基础配置
+ * 4.执行一些重要的方法，初始化基础信息
+ */
 public class Configuration {
 
   protected Environment environment;
@@ -181,6 +188,9 @@ public class Configuration {
   }
 
   public Configuration() {
+    /**
+     * 初始化别名
+     */
     typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
     typeAliasRegistry.registerAlias("MANAGED", ManagedTransactionFactory.class);
 
@@ -654,6 +664,17 @@ public class Configuration {
     return resultSetHandler;
   }
 
+  /**
+   * 创建会话处理器
+   *
+   * @param executor
+   * @param mappedStatement
+   * @param parameterObject
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @return
+   */
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
@@ -676,7 +697,7 @@ public class Configuration {
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
     /**
-     * BATCH: 批量执行所有更新语句
+     * BATCH: 重用语句及批量更新，针对批量专用的执行器
      * REUSE: 复用预处理语句
      * SIMPLE: 默认，每个语句的执行创建一个新的预处理语句
      */

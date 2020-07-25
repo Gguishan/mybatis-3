@@ -1,9 +1,10 @@
 package org.gugs.mybatis.model;
 
 public class User {
+    private String real_name;
     private String username;
     private String password;
-    private int id;
+    private Long id;
 
     public String getUsername() {
         return username;
@@ -21,21 +22,29 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", id=" + id +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "User{" +
+      "real_name='" + real_name + '\'' +
+      ", username='" + username + '\'' +
+      ", password='" + password + '\'' +
+      ", id=" + id +
+      '}';
+  }
 
-    public void setId(int id) {
+  public void setId(Long id) {
         this.id = id;
     }
 
+  public String getReal_name() {
+    return real_name;
+  }
+
+  public void setReal_name(String real_name) {
+    this.real_name = real_name;
+  }
 }

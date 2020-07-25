@@ -5,5 +5,7 @@ import org.gugs.mybatis.model.User;
 import java.util.List;
 
 public interface UserMapper {
-    List<User> getUser(User user);
+  List<User> getUser(User user);
+
+  User getUserById(Long id);
 }

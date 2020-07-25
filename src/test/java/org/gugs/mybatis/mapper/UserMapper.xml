@@ -4,6 +4,11 @@
     <resultMap id="user" type="org.gugs.mybatis.model.User"></resultMap>
     <select id="getUser" parameterType="org.gugs.mybatis.model.User"
             resultMap="user">
-        select * from tb_user
+        select * from sys_consumer
     </select>
+
+  <select id="getUserById" parameterType="org.gugs.mybatis.model.User"
+          resultMap="user">
+    select * from sys_consumer where id = #{id}
+  </select>
 </mapper>

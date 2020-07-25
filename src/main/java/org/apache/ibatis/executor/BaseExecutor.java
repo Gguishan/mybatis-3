@@ -47,6 +47,12 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
+
+/**
+ * Executor先调用StatementHandler的prepare()方法预编译SQL语句，并设置一些基本运行参数，然后用parameterize()方法通过ParameterHandler设置参数，完成预编译
+ * 然后执行SQL语句
+ * 若是查询语句，还需要使用ResultSetHandler处理并封装结果返回
+ */
 public abstract class BaseExecutor implements Executor {
 
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
@@ -59,7 +65,9 @@ public abstract class BaseExecutor implements Executor {
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
 
+  // 查询栈深度
   protected int queryStack;
+  // 执行器Executor是否关闭
   private boolean closed;
 
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
@@ -113,7 +121,9 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // 判断Executor是否关闭，未关闭，则刷新本地缓存
     clearLocalCache();
+    // 处理SQL更新
     return doUpdate(ms, parameter);
   }
 
@@ -126,12 +136,14 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // 处理刷新声明
     return doFlushStatements(isRollBack);
   }
 
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
     BoundSql boundSql = ms.getBoundSql(parameter);
+    // 创建一级缓存key
     CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
   }
@@ -143,16 +155,20 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // 查询前，清理缓存
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
       clearLocalCache();
     }
     List<E> list;
     try {
       queryStack++;
+      // 判断是否存在缓存
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
+        // 命中缓存，则处理缓存数据，从缓存中复制该数据
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
       } else {
+        // 未命中缓存，从数据库中查询
         list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
       }
     } finally {
@@ -197,9 +213,13 @@ public abstract class BaseExecutor implements Executor {
       throw new ExecutorException("Executor was closed.");
     }
     CacheKey cacheKey = new CacheKey();
+    // 设置方法全限定名
     cacheKey.update(ms.getId());
+    // 分页偏移量
     cacheKey.update(rowBounds.getOffset());
+    // 分页查询数量
     cacheKey.update(rowBounds.getLimit());
+    // SQL
     cacheKey.update(boundSql.getSql());
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
@@ -249,7 +269,9 @@ public abstract class BaseExecutor implements Executor {
   public void rollback(boolean required) throws SQLException {
     if (!closed) {
       try {
+        // 清理本地缓存
         clearLocalCache();
+        // 刷新声明
         flushStatements(true);
       } finally {
         if (required) {
@@ -259,6 +281,9 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * 判断Executor是否关闭，未关闭，则刷新本地缓存
+   */
   @Override
   public void clearLocalCache() {
     if (!closed) {

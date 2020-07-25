@@ -31,22 +31,50 @@ import org.apache.ibatis.session.Configuration;
 /**
  * @author Clinton Begin
  */
+
+/**
+ * 保存映射器的一个节点（select|insert|update|delete）信息
+ */
 public final class MappedStatement {
 
+  /**
+   * Mapper.xml文件的全路径
+   */
   private String resource;
+  /**
+   * 配置类
+   */
   private Configuration configuration;
+  /**
+   * Mapper接口类的全限定名+方法名，具备唯一性
+   */
   private String id;
   private Integer fetchSize;
   private Integer timeout;
+  /**
+   * Statement类型，STATEMENT, PREPARED, CALLABLE
+   */
   private StatementType statementType;
+  /**
+   * 结果集类型
+   */
   private ResultSetType resultSetType;
+  /**
+   * 提供BoundSql对象，用于根据参数及其他规则组建SQL
+   */
   private SqlSource sqlSource;
   private Cache cache;
+  /**
+   * 参数Map，即将弃用
+   */
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;
+  /**
+   * 当前SQL语句类型, UNKNOWN, INSERT, UPDATE, DELETE, SELECT, FLUSH
+   */
   private SqlCommandType sqlCommandType;
   private KeyGenerator keyGenerator;
   private String[] keyProperties;

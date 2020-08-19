@@ -153,6 +153,9 @@ public class Configuration {
    */
   protected Class<?> configurationFactory;
 
+  /**
+   * MapperRegistry类中封装Mapper代理工厂的映射表，{key: Mapper接口， value：Mapper代理工厂}
+   */
   protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
   /**
    * 插件——拦截器链，用于存储拦截器以及拦截器列表的获取
@@ -670,12 +673,12 @@ public class Configuration {
   /**
    * 创建会话处理器
    *
-   * @param executor
-   * @param mappedStatement
-   * @param parameterObject
-   * @param rowBounds
-   * @param resultHandler
-   * @param boundSql
+   * @param executor 执行器
+   * @param mappedStatement Statement对象
+   * @param parameterObject 参数对象
+   * @param rowBounds 分页
+   * @param resultHandler 结果处理器
+   * @param boundSql sql
    * @return
    */
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {

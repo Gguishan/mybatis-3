@@ -38,6 +38,11 @@ import org.apache.ibatis.transaction.Transaction;
  */
 public class ReuseExecutor extends BaseExecutor {
 
+  /**
+   * Statement对象缓存, {key: sql语句， value: Statement对象}
+   *
+   * 执行Query或Update时，通过sql从statementMap中获取Statement对象， 存在则使用，不存在则新建
+   */
   private final Map<String, Statement> statementMap = new HashMap<>();
 
   public ReuseExecutor(Configuration configuration, Transaction transaction) {

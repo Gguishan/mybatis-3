@@ -110,6 +110,9 @@ public class XMLStatementBuilder extends BaseBuilder {
           ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
     }
 
+    /**
+     * 处理对象字段，将#{字段}替换为占位符【?】
+     */
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
     // 选择JDBC的statement类型，默认为PREPARED类型
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));

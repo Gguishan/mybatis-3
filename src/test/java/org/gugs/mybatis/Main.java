@@ -20,5 +20,12 @@ public class Main {
 //        System.err.println(userList);
     final User user = userMapper.getUserById(433429584428400640L);
     System.err.println(user);
+
+//    User user1 = new User();
+//    user1.setId(System.currentTimeMillis());
+//    user1.setUsername("gugs");
+//    user1.setReal_name("Gugs");
+//    userMapper.insertUser(user1);
+//    sqlSession.commit();
   }
 }

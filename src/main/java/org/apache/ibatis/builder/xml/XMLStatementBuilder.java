@@ -111,7 +111,8 @@ public class XMLStatementBuilder extends BaseBuilder {
     }
 
     /**
-     * 处理对象字段，将#{字段}替换为占位符【?】
+     * 1.处理动态SQL语句，如<if/> 、<where/>等标签
+     * 2.处理对象字段，将#{字段}替换为占位符【?】
      */
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
     // 选择JDBC的statement类型，默认为PREPARED类型

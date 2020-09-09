@@ -9,6 +9,15 @@
 
   <select id="getUserById" parameterType="org.gugs.mybatis.model.User"
           resultMap="user">
-    select * from sys_consumer where id = #{id}
+    select * from sys_consumer
+    <where>
+      <if test="id != null">
+        and id = #{id}
+      </if>
+    </where>
   </select>
+
+  <insert id="insertUser">
+    insert into sys_consumer(id, username, real_name) values (#{id}, #{username}, #{real_name})
+  </insert>
 </mapper>

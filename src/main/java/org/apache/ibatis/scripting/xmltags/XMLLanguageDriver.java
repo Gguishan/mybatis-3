@@ -41,6 +41,7 @@ public class XMLLanguageDriver implements LanguageDriver {
   @Override
   public SqlSource createSqlSource(Configuration configuration, XNode script, Class<?> parameterType) {
     XMLScriptBuilder builder = new XMLScriptBuilder(configuration, script, parameterType);
+    // 处理SQL内动态sql语句，如<if/> 、<where/>等标签 以及 参数中的占位符?
     return builder.parseScriptNode();
   }
 

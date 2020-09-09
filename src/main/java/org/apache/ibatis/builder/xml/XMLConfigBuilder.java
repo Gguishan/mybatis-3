@@ -476,6 +476,11 @@ public class XMLConfigBuilder extends BaseBuilder {
           } else if (resource == null && url == null && mapperClass != null) {
             // 反射加载当前mapper类，并设置到mapper映射器中
             Class<?> mapperInterface = Resources.classForName(mapperClass);
+            /**
+             * 将接口添加至配置类中，配置类中存在mapperRegistry对象，
+             * 该对象中对接口类进行处理，生成接口对应的Mapper接口代理工厂MapperProxyFactory，
+             * 在之后使用该接口内方法之时，通过代理工厂生成对应的代理对象，并通过MappedStatement对象执行sql，获得结果
+             */
             configuration.addMapper(mapperInterface);
           } else {
             throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
